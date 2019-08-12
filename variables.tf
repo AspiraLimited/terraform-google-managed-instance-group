@@ -65,16 +65,16 @@ variable "startup_script" {
 
 variable "access_config" {
   description = "The access config block for the instances. Set to [] to remove external IP."
-  type        = "list"
-
-  default = [
-    {},
-  ]
+  type        = list(object({
+    nat_ip       = string
+    network_tier = string
+  }))
+  default     = []
 }
 
 variable "metadata" {
   description = "Map of metadata values to pass to instances."
-  type        = "map"
+  type        = map(string)
   default     = {}
 }
 
@@ -105,7 +105,13 @@ variable "wait_for_instances" {
 
 variable "update_policy" {
   description = "The upgrade policy to apply when the instance template changes."
-  type        = "list"
+  type        = list(object({
+    type                  = string
+    minimal_action        = string
+    max_surge_fixed       = number
+    max_unavailable_fixed = number
+    min_ready_sec         = number
+  }))
   default     = []
 }
 
@@ -119,19 +125,19 @@ variable "service_port_name" {
 
 variable "target_tags" {
   description = "Tag added to instances for firewall and networking."
-  type        = "list"
+  type        = list(string)
   default     = ["allow-service"]
 }
 
 variable "instance_labels" {
   description = "Labels added to instances."
-  type        = "map"
+  type        = map(string)
   default     = {}
 }
 
 variable "target_pools" {
   description = "The target load balancing pools to assign this group to."
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
@@ -157,7 +163,7 @@ variable "service_account_email" {
 
 variable "service_account_scopes" {
   description = "List of scopes for the instance template service account"
-  type        = "list"
+  type        = list(string)
 
   default = [
     "https://www.googleapis.com/auth/compute",
@@ -172,15 +178,15 @@ variable "zonal" {
   default     = true
 }
 
-variable distribution_policy_zones {
+variable "distribution_policy_zones" {
   description = "The distribution policy for this managed instance group when zonal=false. Default is all zones in given region."
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "ssh_source_ranges" {
   description = "Network ranges to allow SSH from"
-  type        = "list"
+  type        = list(string)
   default     = ["0.0.0.0/0"]
 }
 
@@ -237,19 +243,19 @@ variable "cooldown_period" {
 
 variable "autoscaling_cpu" {
   description = "Autoscaling, cpu utilization policy block as single element array. https://www.terraform.io/docs/providers/google/r/compute_autoscaler.html#cpu_utilization"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "autoscaling_metric" {
   description = "Autoscaling, metric policy block as single element array. https://www.terraform.io/docs/providers/google/r/compute_autoscaler.html#metric"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "autoscaling_lb" {
   description = "Autoscaling, load balancing utilization policy block as single element array. https://www.terraform.io/docs/providers/google/r/compute_autoscaler.html#load_balancing_utilization"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
